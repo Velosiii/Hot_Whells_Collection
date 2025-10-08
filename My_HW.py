@@ -29,21 +29,17 @@ def urun_sec(event):
     secim = listebox.curselection()
     if not secim:
         return
-
     index = secim[0]
     urun_adi = listebox.get(index)
-
     urun = next((u for u in urunler if u["isim"] == urun_adi), None)
     if not urun:
         return
-
     resim_yolu = urun.get("resim", "")
     if not os.path.exists(resim_yolu):
         messagebox.showwarning("Uyarı", f"Resim bulunamadı: {resim_yolu}")
         return
-
     img = Image.open(resim_yolu)
-    img = img.resize((300, 300))
+    img = img.resize((300, 400))
     img_tk = ImageTk.PhotoImage(img)
     resim_label.config(image=img_tk)
     resim_label.image = img_tk
@@ -64,42 +60,32 @@ def urun_ekle():
     isim = entry_isim.get().strip()
     kategori_raw = entry_kategori.get().strip()
     resim_yolu = entry_resim.get().strip()
-
     if not isim or not kategori_raw or not resim_yolu:
         messagebox.showwarning("Uyarı", "Tüm alanları doldurmalısın!")
         return
-
     if not os.path.exists(resim_yolu):
         messagebox.showerror("Hata", "Seçilen resim bulunamadı!")
         return
-
-    # Çoklu kategori desteği
-    # Örn: "Kapı, Bahçe" -> ["Kapı", "Bahçe"]
     kategori_listesi = [k.strip() for k in kategori_raw.split(",") if k.strip()]
-
     yeni_urun = {
         "isim": isim,
         "kategori": kategori_listesi,
         "resim": resim_yolu
     }
-
     urunler.append(yeni_urun)
     urunleri_kaydet()
     filtre_guncelle()
-
     entry_isim.delete(0, tk.END)
     entry_kategori.delete(0, tk.END)
     entry_resim.delete(0, tk.END)
     messagebox.showinfo("Başarılı", f"'{isim}' ürünü eklendi!")
 
-
-# Ürün düzenleme penceresi
+# Ürün düzenleme
 def urun_duzenle():
     secim = listebox.curselection()
     if not secim:
         messagebox.showwarning("Uyarı", "Düzenlemek için bir ürün seçin!")
         return
-
     index = secim[0]
     urun_adi = listebox.get(index)
     urun = next((u for u in urunler if u["isim"] == urun_adi), None)
@@ -129,40 +115,32 @@ def urun_duzenle():
     entry_duzen_resim.grid(row=2, column=1, pady=5)
     entry_duzen_resim.insert(0, urun["resim"])
 
-    btn_resim_sec = tk.Button(
-        duzenle_pencere, text="Resim Seç", command=lambda: resim_sec(entry_duzen_resim)
-    )
+    btn_resim_sec = tk.Button(duzenle_pencere, text="Resim Seç", command=lambda: resim_sec(entry_duzen_resim))
     btn_resim_sec.grid(row=2, column=2, padx=5)
 
     def kaydet_duzenleme():
         yeni_isim = entry_duzen_isim.get().strip()
         yeni_kategori_raw = entry_duzen_kategori.get().strip()
         yeni_resim = entry_duzen_resim.get().strip()
-
         if not yeni_isim or not yeni_kategori_raw or not yeni_resim:
             messagebox.showwarning("Uyarı", "Tüm alanları doldurmalısın!")
             return
-
         yeni_kategori_listesi = [k.strip() for k in yeni_kategori_raw.split(",") if k.strip()]
-
         urun["isim"] = yeni_isim
-        urun["kategori"] = yeni_kategori_raw
+        urun["kategori"] = yeni_kategori_listesi
         urun["resim"] = yeni_resim
-
         urunleri_kaydet()
         filtre_guncelle()
         duzenle_pencere.destroy()
         messagebox.showinfo("Başarılı", f"'{yeni_isim}' başarıyla güncellendi!")
 
-    btn_kaydet_duzen = tk.Button(
-        duzenle_pencere, text="Kaydet", bg="#0984e3", fg="white", command=kaydet_duzenleme
-    )
+    btn_kaydet_duzen = tk.Button(duzenle_pencere, text="Kaydet", bg="#0984e3", fg="white", command=kaydet_duzenleme)
     btn_kaydet_duzen.grid(row=3, column=1, pady=15)
 
 # --- Ana pencere ---
 pencere = tk.Tk()
 pencere.title("Ürün Görüntüleyici")
-pencere.geometry("900x520")
+pencere.geometry("1000x620")
 pencere.config(bg="#e0e0e0")
 
 urunler = urunleri_yukle()
@@ -173,14 +151,13 @@ liste_frame.pack(side="left", fill="y")
 
 tk.Label(liste_frame, text="Ürün Listesi", bg="#d0d0d0", font=("Arial", 12, "bold")).pack()
 
-KATEGORILER = ["Toyota", "Porsche", "Subaru", "Ford", "Honda", "Bmw", "Ferrari", "Lamborghini", "Kia"]
+KATEGORILER = ["Toyota", "Porsche", "Subaru", "Ford", "Honda","Lamborghini", "Ferrari", "Bmw", "Kia"]
 kategori_vars = []
+sutun_siniri = 3
 
-satir_sayisi = 0
-sutun_siniri = 4
-
+# Filtre frame
 filtre_frame = tk.LabelFrame(pencere, text="Kategori Filtrele", bg="#d0d0d0", padx=10, pady=10)
-filtre_frame.pack(fill="x", pady=10)
+filtre_frame.place(x=220, y=20, width=400, height=150)
 
 for i, kat in enumerate(KATEGORILER):
     var = tk.IntVar()
@@ -196,12 +173,9 @@ arama_frame = tk.Frame(liste_frame, bg="#d0d0d0")
 arama_frame.pack(pady=5)
 entry_arama = tk.Entry(arama_frame, width=18)
 entry_arama.pack(side="left", padx=3)
+entry_arama.bind("<Return>", lambda event: filtre_guncelle())
 
-def filtre_guncelle(event=None):
-    filtre_guncelle()
-
-entry_arama.bind("<Return>", filtre_guncelle)
-btn_arama = tk.Button(arama_frame, text="Ara", command=filtre_guncelle)
+btn_arama = tk.Button(arama_frame, text="Ara", command=filtre_frame)
 btn_arama.pack(side="left")
 
 # Liste kutusu
@@ -217,7 +191,6 @@ gorsel_frame.pack(side="right", fill="both", expand=True)
 
 baslik_label = tk.Label(gorsel_frame, text="", font=("Arial", 14, "bold"), bg="#e0e0e0")
 baslik_label.pack(pady=10)
-
 resim_label = tk.Label(gorsel_frame, bg="#e0e0e0")
 resim_label.pack()
 
@@ -243,33 +216,24 @@ btn_resim.grid(row=2, column=2, padx=5)
 btn_kaydet = tk.Button(ekleme_frame, text="Kaydet", bg="#4caf50", fg="white", command=urun_ekle)
 btn_kaydet.grid(row=3, column=1, pady=10)
 
-# --- Checkbox ve Arama ile filtreleme fonksiyonu ---
-def filtre_guncelle():
+# --- Filtreleme fonksiyonu ---
+def filtre_guncelle(event=None):
     secilen_kategoriler = [k for k, var in zip(KATEGORILER, kategori_vars) if var.get() == 1]
     aranan = entry_arama.get().strip().lower()
-
     filtreli = []
     for u in urunler:
-        # Checkbox kontrolü
         urun_kategorileri = u["kategori"]
         if isinstance(urun_kategorileri, str):
             urun_kategorileri = [urun_kategorileri]
-
         checkbox_uyum = not secilen_kategoriler or any(k in urun_kategorileri for k in secilen_kategoriler)
-
-        # Arama kontrolü (isim veya kategori)
         isim_var = aranan in u["isim"].lower() if aranan else True
         kategori_var = any(aranan in k.lower() for k in urun_kategorileri) if aranan else True
-
         if checkbox_uyum and (isim_var or kategori_var):
             filtreli.append(u)
-
     listeyi_guncelle(filtreli)
 
 # Başlangıçta tüm ürünleri listele
 filtre_guncelle()
-
-# Liste seçim olayı
 listebox.bind("<<ListboxSelect>>", urun_sec)
 
 pencere.mainloop()
