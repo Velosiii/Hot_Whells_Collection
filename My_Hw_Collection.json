@@ -1,0 +1,49 @@
+[
+    {
+        "isim": "Custom KIA EV6 HW EV",
+        "kategori": [
+            "HW EV",
+            "Kia",
+            "Mavi"
+        ],
+        "resim": "C:/Users/Velosi/Kodlar/Hot_wheels_collaction/Cars/KiaEv6.jpg"
+    },
+    {
+        "isim": "PORSCHE 911 GT3 RS TAN",
+        "kategori": [
+            "THEN AND NOW",
+            "Porsche",
+            "Pembe"
+        ],
+        "resim": "C:/Users/Velosi/Kodlar/Hot_wheels_collaction/Cars/Porsche911Gt3Rs.jpg"
+    },
+    {
+        "isim": "HONDA S2000 F&F WOF",
+        "kategori": [
+            "FAST&FURIOUS WOMEN OF FAST",
+            "Suki",
+            "Honda",
+            "Pembe"
+        ],
+        "resim": "C:/Users/Velosi/Kodlar/Hot_wheels_collaction/Cars/HondaS2000Suki.jpg"
+    },
+    {
+        "isim": "HONDA S2000 F&F V",
+        "kategori": [
+            "FAST&FURIOUS VILLAINS",
+            "Honda",
+            "Siyah"
+        ],
+        "resim": "C:/Users/Velosi/Kodlar/Hot_wheels_collaction/Cars/HondaS2000Siyah.jpg"
+    },
+    {
+        "isim": "PORSCHE 911 GT3 SM",
+        "kategori": [
+            "SPEED MACHINES",
+            "Porsche",
+            "Mavi",
+            "Premium"
+        ],
+        "resim": "C:/Users/Velosi/Kodlar/Hot_wheels_collaction/Cars/Porsche911Gt3.jpg"
+    }
+]
